@@ -12,8 +12,8 @@ module Griddler
       @from = extract_address(params[:from])
       @subject = extract_subject
 
-      @raw_text = clean_raw_utf8(params[:text])
-      @raw_html = clean_raw_utf8(params[:html])
+      @raw_text = params[:text]
+      @raw_html = params[:html]
       @raw_body = @raw_text.presence || @raw_html
 
       @headers = extract_headers
@@ -46,14 +46,6 @@ module Griddler
       clean_invalid_utf8_bytes(params[:subject])
     end
 
-
-    ##to delete
-    def extract_body
-      text = EmailParser.extract_reply_body(text_or_sanitized_html)
-      text = clean_raw_text(text) if params.fetch(:text, '').presence
-      text
-    end
-
     def extract_headers
       if params[:headers].is_a?(Hash)
         deep_clean_invalid_utf8_bytes(params[:headers])
@@ -64,35 +56,6 @@ module Griddler
 
     def extract_cc_from_headers(headers)
       EmailParser.extract_cc(headers)
-    end
-
-    def text_or_sanitized_html
-      text = clean_invalid_utf8_bytes(params.fetch(:text, ''))
-      text.presence || clean_raw_html(params.fetch(:html, '')).presence
-    end
-
-
-    ##to delete
-    def clean_raw_text(text)
-      cleaned_text = clean_invalid_utf8_bytes(text)
-      full_sanitizer = Rails::Html::FullSanitizer.new
-      cleaned_text = full_sanitizer.sanitize(cleaned_text)
-      cleaned_text = HTMLEntities.new.decode(cleaned_text)
-      cleaned_text
-    end
-
-    ##to delete
-    def clean_raw_html(html)
-      Loofah::HTML5::WhiteList::ACCEPTABLE_PROTOCOLS.add('cid')
-      Loofah::HTML5::WhiteList::ACCEPTABLE_PROTOCOLS.add('data')
-      cleaned_html = clean_invalid_utf8_bytes(html)
-      cleaned_html = sanitize(cleaned_html)
-      cleaned_html = HTMLEntities.new.decode(cleaned_html)
-      cleaned_html
-    end
-
-    def clean_raw_utf8(text)
-      clean_invalid_utf8_bytes(text) || ''
     end
 
     def deep_clean_invalid_utf8_bytes(object)
