@@ -735,7 +735,7 @@ describe Griddler::Email, 'with envelope set' do
   context 'with envelope from payload' do
     it 'passes envelope to the object' do
       recipients = ['caleb@example.com', '<joel@example.com>']
-      envelope = "{\"to\":[\"caleb@example.com",\"joel@example.com\"],\"from\":\"ralph@example.com\"}"
+      envelope = "{\"to\":[\"caleb@example.com\",\"joel@example.com\"],\"from\":\"ralph@example.com\"}"
       params = { to: recipients, from: 'ralph@example.com', text: 'hi guys', envelope: envelope }
 
       email = Griddler::Email.new(params)
