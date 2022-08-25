@@ -744,3 +744,17 @@ describe Griddler::Email, 'with envelope set' do
     end
   end
 end
+
+describe Griddler::Email, 'with charsets set' do
+  context 'with charsets from payload' do
+    it 'passes charsets to the object' do
+      recipients = ['caleb@example.com', '<joel@example.com>']
+      charsets = { to: 'UTF-8', cc: 'UTF-8', filename: 'UTF-8', subject: 'UTF-8', from: 'UTF-8', text: 'UTF-8' }.to_json
+      params = { to: recipients, from: 'ralph@example.com', text: 'hi guys', charsets: charsets}
+
+      email = Griddler::Email.new(params)
+
+      expect(email.charsets).to eq charsets
+    end
+  end
+end
