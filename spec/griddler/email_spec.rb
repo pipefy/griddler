@@ -582,6 +582,25 @@ describe Griddler::Email, 'extracting email addresses' do
 
   end
 
+  it 'handles empty e-mail address' do
+    email = Griddler::Email.new(
+      text: 'hi',
+      from: '',
+      to: ['']
+    )
+
+    expected = {
+      token: nil,
+      host: nil,
+      email: nil,
+      full: '',
+      name: nil
+    }
+
+    expect(email.to).to eq [expected]
+    expect(email.from).to eq expected
+  end
+
   it 'handles empty names' do
     email = Griddler::Email.new(
       text: 'hi',
@@ -591,7 +610,7 @@ describe Griddler::Email, 'extracting email addresses' do
     expected = {
       token: nil,
       host: nil,
-      email: '',
+      email: nil,
       full: ' ',
       name: nil
     }
